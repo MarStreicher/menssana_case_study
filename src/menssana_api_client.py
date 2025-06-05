@@ -67,7 +67,7 @@ class MenssanaApiClient:
         self.raw_data = self.raw_data[0 : self.entries]
         return self.raw_data
 
-    ######################## Data preperation #######################################
+    ######################## Data preparation #######################################
 
     def _parse_vital_signs(self) -> List[dict[str, dict]]:
         self.prepared_data = self.raw_data
@@ -109,6 +109,8 @@ class MenssanaApiClient:
         self._convert_into_frame()
         return self._store_data()
 
+
+######################## Execution #######################################
 
 if __name__ == "__main__":
     client = MenssanaApiClient()

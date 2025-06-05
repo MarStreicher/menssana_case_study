@@ -56,3 +56,19 @@ Environment:
 ```
 conda activate env_menssana
 ```
+
+## Evaluation of the models
+
+| medical_emergency | monitor_alarm  | Expected result | category |
+|------------|------------|------------|---------|
+| F| F| low probability | true negative |
+| F| T| low probability | false positive |
+| T| F| high probability (Aim?)| false negative|
+| T| T| high probability| true positive |
+
+- Special case: There is a medical emergency but no monitore alarm.
+- Problem here: 12 cases - but not really the aim
+- The aim is to detect false positive ones but not to be better than the monitor, right?
+- Should be a criterion in the evaluation
+
+
