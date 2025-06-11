@@ -6,7 +6,7 @@ from typing import List, Optional
 class EvaluationData:
     def __init__(
         self,
-        file_path: str = "../data/solutions_case_study_task2_data.csv",
+        file_path: str = "../menssana_case_study/data/solutions_case_study_task2_data.csv",
         columns: Optional[List[str]] = None,
     ) -> None:
         self.file_path = file_path
