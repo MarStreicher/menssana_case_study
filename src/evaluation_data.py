@@ -7,16 +7,14 @@ class EvaluationData:
     def __init__(
         self,
         file_path: str = "../menssana_case_study/data/solutions_case_study_task2_data.csv",
-        columns: Optional[List[str]] = None,
+        threshold: float = 0.5,
     ) -> None:
         self.file_path = file_path
-        self.columns = columns
+        self.threshold = threshold
 
         self.raw_data = pd.read_csv(file_path)
         self.data = self._add_bool_label()
         self.data = self._add_alarm_category()
-        if columns:
-            self.data = self._filter_columns()
 
     def _add_bool_label(self):
         prob_columns = {
@@ -27,7 +25,7 @@ class EvaluationData:
 
         for prob_col, bool_col in prob_columns.items():
             if prob_col in self.raw_data.columns:
-                self.raw_data[bool_col] = self.raw_data[prob_col] >= 0.5
+                self.raw_data[bool_col] = self.raw_data[prob_col] >= self.threshold
         return self.raw_data
 
     def _add_alarm_category(self):
@@ -45,9 +43,6 @@ class EvaluationData:
 
         self.data["category"] = self.data.apply(_compute_category, axis=1)
         return self.data
-
-    def _filter_columns(self):
-        return self.raw_data[self.columns]
 
     def filter_monitor_false_negative(self) -> "EvaluationData":
         self.data = self.data[self.data["category"] != "false negative"]

@@ -15,15 +15,9 @@ class EvaluationHelper:
             if models is None
             else models
         )
-        self.probability_models = (
-            [
-                "ai_model1_alarm_probability",
-                "ai_model2_alarm_probability",
-                "ai_model3_alarm_probability",
-            ]
-            if models is None
-            else models
-        )
+        self.probability_models = [
+            col for col in data.columns if col.endswith("_alarm_probability")
+        ]
 
     def get_false_positive_rate(self):
         fprs = {}
@@ -102,7 +96,10 @@ class EvaluationHelper:
 
         return accuracies
 
-    def plot_roc_auc_curve(self):
+    def plot_roc_auc_curve(self, best_threshold: bool = False):
+        def _get_best_threshold(thresholds, trp):
+            return np.where(trp >= 0.89)[0][0]
+
         plt.figure(figsize=(8, 6))
         for model in self.probability_models:
             auc = roc_auc_score(
@@ -112,11 +109,15 @@ class EvaluationHelper:
                 self.data["medical_emergency"].astype(int), self.data[model]
             )
 
-            index_05 = np.argmin(np.abs(thresholds - 0.5))
+            if best_threshold:
+                index = _get_best_threshold(thresholds, trp)
+                print(f"{model}: {thresholds[index]}")
+            else:
+                index = np.argmin(np.abs(thresholds - 0.5))
 
             names = model.split("_")
             plt.plot(fpr, trp, label=f"{names[1]} (AUC = {round(auc,2)})")
-            plt.scatter(fpr[index_05], trp[index_05], color="red")
+            plt.scatter(fpr[index], trp[index], color="red")
 
         plt.plot([0, 1], [0, 1], "k--", label="Chance")
         plt.xlabel("False Positive Rate")
@@ -126,4 +127,3 @@ class EvaluationHelper:
         plt.grid(True)
         plt.show()
         return
-
